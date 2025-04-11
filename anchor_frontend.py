@@ -11,14 +11,27 @@ st.sidebar.subheader("🔐 Login")
 username = st.sidebar.text_input("Username")
 password = st.sidebar.text_input("Password", type="password")
 
+import requests
+from requests.exceptions import RequestException
+
 if st.sidebar.button("Login"):
-    response = requests.post(f"{API_URL}/login", data={"username": username, "password": password})
-    if response.status_code == 200:
-        token = response.json()["access_token"]
-        st.session_state["token"] = token
-        st.sidebar.success("Logged in!")
-    else:
-        st.sidebar.error("Invalid login.")
+
+    try:
+        response = requests.post(
+            f"{API_URL}/login",
+            data={"username": username, "password": password},
+            timeout=5  # optional but recommended
+        )
+        response.raise_for_status()
+    except RequestException as e:
+        st.error(f"⚠️ Could not connect to backend: {e}")
+        st.stop()
+        if response.status_code == 200:
+            token = response.json()["access_token"]
+            st.session_state["token"] = token
+            st.sidebar.success("Logged in!")
+        else:
+            st.sidebar.error("Invalid login.")
 
 # === JOURNAL FORM ===
 if token:
