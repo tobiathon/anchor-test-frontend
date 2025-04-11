@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://127.0.0.1:8000"  # Replace with your public backend URL when hosted
+API_URL = "https://anchor-app.onrender.com"  # Replace with your public backend URL when hosted
 token = st.session_state.get("token", "")
 
 st.title("🧠 Anchor Journal Portal")
