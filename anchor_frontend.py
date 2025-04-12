@@ -8,10 +8,8 @@ st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
 # === 🧠 Only rerun if token exists and just_logged_in is set ===
-if (
-    st.session_state.get("just_logged_in") 
-    and st.session_state.get("token")
-):
+# Defer rerun using a callback placeholder at the bottom
+def safe_rerun():
     st.session_state["just_logged_in"] = False
     st.experimental_rerun()
 
@@ -78,3 +76,7 @@ else:
 
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
+
+# === Final: trigger rerun if login just happened, but only after render
+if st.session_state.get("just_logged_in") and st.session_state.get("token"):
+    st.button("...", on_click=safe_rerun, args=[])
