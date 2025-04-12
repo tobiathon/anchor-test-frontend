@@ -13,7 +13,15 @@ if "token" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state["username"] = None
 if "view" not in st.session_state:
-    st.session_state["view"] = "login"  # "login", "loading", "journal"
+    st.session_state["view"] = "login"
+if "pending_rerun" not in st.session_state:
+    st.session_state["pending_rerun"] = False
+
+# === RERUN TRIGGER AT THE TOP ===
+# This is now SAFE and will execute before any widgets are drawn
+if st.session_state.get("pending_rerun"):
+    st.session_state["pending_rerun"] = False
+    st.experimental_rerun()
 
 # === SIDEBAR STATUS ===
 if st.session_state["token"]:
@@ -39,7 +47,8 @@ if st.session_state["view"] == "login":
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
-                st.session_state["view"] = "loading"
+                st.session_state["view"] = "journal"
+                st.session_state["pending_rerun"] = True  # 🔁 schedule a safe rerun
                 st.sidebar.success("✅ Logged in!")
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
@@ -48,16 +57,7 @@ if st.session_state["view"] == "login":
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === LOADING INTERFACE ===
-elif st.session_state["view"] == "loading":
-    st.info("🔄 Logging in, please wait...")
-
-    # Safely rerun once view is updated
-    with st.empty():
-        st.session_state["view"] = "journal"
-        st.experimental_rerun()
-
-# === JOURNAL INTERFACE ===
+# === JOURNAL VIEW ===
 elif st.session_state["view"] == "journal":
     st.subheader("📓 New Journal Entry")
 
