@@ -20,7 +20,7 @@ if st.sidebar.button("Login"):
         response = requests.post(
             f"{API_URL}/login",
             data={"username": username, "password": password},
-            timeout=5  # optional but recommended
+            timeout=20  # optional but recommended
         )
         response.raise_for_status()
     except RequestException as e:
