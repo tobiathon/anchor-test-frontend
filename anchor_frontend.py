@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from requests.exceptions import RequestException
+import time  # 👈 new
 
 API_URL = "https://anchor-app.onrender.com"
 
@@ -17,10 +18,10 @@ if "view" not in st.session_state:
 if "pending_rerun" not in st.session_state:
     st.session_state["pending_rerun"] = False
 
-# === RERUN TRIGGER AT THE TOP ===
-# This is now SAFE and will execute before any widgets are drawn
-if st.session_state.get("pending_rerun"):
+# === DELAYED SAFE RERUN ===
+if st.session_state["pending_rerun"]:
     st.session_state["pending_rerun"] = False
+    time.sleep(0.25)  # 👈 short pause to allow render to settle
     st.experimental_rerun()
 
 # === SIDEBAR STATUS ===
@@ -48,7 +49,7 @@ if st.session_state["view"] == "login":
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
                 st.session_state["view"] = "journal"
-                st.session_state["pending_rerun"] = True  # 🔁 schedule a safe rerun
+                st.session_state["pending_rerun"] = True  # 🔁 now rerun, but wait first
                 st.sidebar.success("✅ Logged in!")
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
