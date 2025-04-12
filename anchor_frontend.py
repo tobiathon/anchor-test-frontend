@@ -6,6 +6,8 @@ API_URL = "https://anchor-app.onrender.com"  # Your backend URL
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
+if st.session_state.get("just_logged_in"):
+    del st.session_state["just_logged_in"]  # cleanup rerun flag
 
 # === LOGIN CHECK ===
 if "token" not in st.session_state:
@@ -25,8 +27,8 @@ if "token" not in st.session_state:
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username
-                st.sidebar.success("✅ Logged in!")
-                st.experimental_rerun()  # Refresh UI after login
+                st.session_state["just_logged_in"] = True  # <-- set rerun flag
+                st.experimental_rerun()  # safe now, only triggered once
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
         except RequestException as e:
