@@ -60,7 +60,7 @@ else:
         }
 
         try:
-            res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=20)
+            res = requests.post(f"{API_URL}/journal/upload_journal", json=payload, headers=headers, timeout=20)
             res.raise_for_status()
             response_data = res.json()
             echo_output = response_data.get("echo_output", {})
