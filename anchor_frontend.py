@@ -26,10 +26,10 @@ if not st.session_state["token"]:
     if login_clicked:
         try:
             response = requests.post(
-                f"{API_URL}/login",
+                f"{API_URL}/auth/login",
                 data={"username": username_input, "password": password_input},
                 timeout=20
-            )
+)
             response.raise_for_status()
             token = response.json().get("access_token")
 
