@@ -2,16 +2,21 @@ import streamlit as st
 import requests
 from requests.exceptions import RequestException
 
-API_URL = "https://anchor-app.onrender.com"  # Your backend URL
+API_URL = "https://anchor-app.onrender.com"  # Public backend URL
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
-if st.session_state.get("just_logged_in"):
-    del st.session_state["just_logged_in"]  # cleanup rerun flag
 
-# === LOGIN CHECK ===
+# === Handle rerun after login safely ===
+if st.session_state.get("just_logged_in"):
+    st.session_state["just_logged_in"] = False
+    st.experimental_rerun()
+
+# === LOGIN VIEW ===
 if "token" not in st.session_state:
     st.sidebar.subheader("🔐 Login")
+
+    # Capture inputs
     username = st.sidebar.text_input("Username")
     password = st.sidebar.text_input("Password", type="password")
 
@@ -24,19 +29,24 @@ if "token" not in st.session_state:
             )
             response.raise_for_status()
             token = response.json().get("access_token")
+
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username
-                st.session_state["just_logged_in"] = True  # <-- set rerun flag
-                st.experimental_rerun()  # safe now, only triggered once
+                st.session_state["just_logged_in"] = True
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
         except RequestException as e:
             st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
 
+    # Info while logged out
+    st.info("🔐 Please log in to submit a journal entry.")
+
+# === JOURNAL VIEW ===
 else:
-    # === JOURNAL FORM ===
+    st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
+
     entry_text = st.text_area("What’s on your mind today?")
 
     if st.button("Submit"):
@@ -45,6 +55,7 @@ else:
             "user_id": st.session_state["username"],
             "entry_text": entry_text
         }
+
         try:
             res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=15)
             res.raise_for_status()
@@ -52,16 +63,16 @@ else:
 
             st.success("📝 Journal submitted successfully!")
             st.write("### 🧠 Echo's Reflection")
-            st.write("**Summary:**", echo_output["summary"])
-            st.write("**Emotions:**", ", ".join(echo_output["emotions"]))
+            st.write("**Summary:**", echo_output.get("summary", "No summary."))
+            st.write("**Emotions:**", ", ".join(echo_output.get("emotions", [])))
+
             st.write("**Insights:**")
-            for insight in echo_output["insights"]:
+            for insight in echo_output.get("insights", []):
                 st.write(f"- {insight}")
+
             st.write("**Questions:**")
-            for q in echo_output["questions"]:
+            for q in echo_output.get("questions", []):
                 st.write(f"- {q}")
 
-        except requests.exceptions.RequestException as e:
+        except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
-
-    st.sidebar.success("✅ You are logged in.")
