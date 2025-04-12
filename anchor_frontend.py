@@ -13,7 +13,7 @@ if "token" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state["username"] = None
 if "view" not in st.session_state:
-    st.session_state["view"] = "login"  # either "login", "journal", or "loading"
+    st.session_state["view"] = "login"  # "login", "loading", "journal"
 
 # === SIDEBAR STATUS ===
 if st.session_state["token"]:
@@ -21,13 +21,8 @@ if st.session_state["token"]:
 else:
     st.sidebar.subheader("🔐 Login")
 
-# === HANDLE LOGIN SUCCESS — use a loading state to rerender
-if st.session_state["view"] == "loading":
-    st.info("🔄 Logging in, please wait...")
-    st.session_state["view"] = "journal"
-
 # === LOGIN VIEW ===
-elif st.session_state["view"] == "login":
+if st.session_state["view"] == "login":
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
 
@@ -44,7 +39,7 @@ elif st.session_state["view"] == "login":
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
-                st.session_state["view"] = "loading"  # switch views first
+                st.session_state["view"] = "loading"
                 st.sidebar.success("✅ Logged in!")
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
@@ -53,7 +48,16 @@ elif st.session_state["view"] == "login":
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL VIEW ===
+# === LOADING INTERFACE ===
+elif st.session_state["view"] == "loading":
+    st.info("🔄 Logging in, please wait...")
+
+    # Safely rerun once view is updated
+    with st.empty():
+        st.session_state["view"] = "journal"
+        st.experimental_rerun()
+
+# === JOURNAL INTERFACE ===
 elif st.session_state["view"] == "journal":
     st.subheader("📓 New Journal Entry")
 
