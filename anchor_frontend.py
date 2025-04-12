@@ -12,6 +12,13 @@ if "token" not in st.session_state:
     st.session_state["token"] = None
 if "username" not in st.session_state:
     st.session_state["username"] = None
+if "login_successful" not in st.session_state:
+    st.session_state["login_successful"] = False
+
+# === SAFE RERUN AFTER LOGIN ===
+if st.session_state["login_successful"] and st.session_state["token"]:
+    st.session_state["login_successful"] = False
+    st.experimental_rerun()
 
 # === LOGIN FORM ===
 if not st.session_state["token"]:
@@ -20,9 +27,7 @@ if not st.session_state["token"]:
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
 
-    login_clicked = st.sidebar.button("Login")
-
-    if login_clicked:
+    if st.sidebar.button("Login"):
         try:
             response = requests.post(
                 f"{API_URL}/login",
@@ -35,6 +40,7 @@ if not st.session_state["token"]:
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
+                st.session_state["login_successful"] = True
                 st.sidebar.success("✅ Logged in!")
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
