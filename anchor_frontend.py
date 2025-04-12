@@ -13,9 +13,9 @@ if "token" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state["username"] = None
 if "view" not in st.session_state:
-    st.session_state["view"] = "login"  # "login" or "journal"
+    st.session_state["view"] = "login"  # either "login" or "journal"
 
-# === SIDEBAR ===
+# === SIDEBAR STATUS ===
 if st.session_state["token"]:
     st.sidebar.success("✅ You are logged in.")
 else:
@@ -39,8 +39,9 @@ if st.session_state["view"] == "login":
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
-                st.session_state["view"] = "journal"  # 👈 SWITCH HERE
+                st.session_state["view"] = "journal"
                 st.sidebar.success("✅ Logged in!")
+                st.experimental_rerun()  # 🔄 Safe rerun to refresh layout
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
         except RequestException as e:
