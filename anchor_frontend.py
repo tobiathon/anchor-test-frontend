@@ -1,53 +1,54 @@
 import streamlit as st
 import requests
-
-API_URL = "https://anchor-app.onrender.com"  # Replace with your public backend URL when hosted
-token = st.session_state.get("token", "")
-
-st.title("🧠 Anchor Journal Portal")
-
-# === LOGIN SECTION ===
-st.sidebar.subheader("🔐 Login")
-username = st.sidebar.text_input("Username")
-password = st.sidebar.text_input("Password", type="password")
-
-import requests
 from requests.exceptions import RequestException
 
-if st.sidebar.button("Login"):
-    try:
-        response = requests.post(
-            f"{API_URL}/login",
-            data={"username": username, "password": password},
-            timeout=20
-        )
-        response.raise_for_status()  # will raise if status >= 400
+API_URL = "https://anchor-app.onrender.com"  # Your backend URL
 
-        token = response.json().get("access_token")
-        if token:
-            st.session_state["token"] = token
-            st.sidebar.success("✅ Logged in!")
-            st.stop()
-        else:
-            st.sidebar.error("❌ Login failed — no token received.")
+st.set_page_config(page_title="Anchor Journal", layout="centered")
+st.title("🧠 Anchor Journal Portal")
 
-    except RequestException as e:
-        st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
+# === LOGIN CHECK ===
+if "token" not in st.session_state:
+    st.sidebar.subheader("🔐 Login")
+    username = st.sidebar.text_input("Username")
+    password = st.sidebar.text_input("Password", type="password")
 
-# === JOURNAL FORM ===
-if token:
+    if st.sidebar.button("Login"):
+        try:
+            response = requests.post(
+                f"{API_URL}/login",
+                data={"username": username, "password": password},
+                timeout=20
+            )
+            response.raise_for_status()
+            token = response.json().get("access_token")
+            if token:
+                st.session_state["token"] = token
+                st.session_state["username"] = username
+                st.sidebar.success("✅ Logged in!")
+                st.experimental_rerun()  # Refresh UI after login
+            else:
+                st.sidebar.error("❌ Login failed — no token received.")
+        except RequestException as e:
+            st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
+
+else:
+    # === JOURNAL FORM ===
     st.subheader("📓 New Journal Entry")
     entry_text = st.text_area("What’s on your mind today?")
+
     if st.button("Submit"):
-        headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {st.session_state['token']}"}
         payload = {
-            "user_id": username,
+            "user_id": st.session_state["username"],
             "entry_text": entry_text
         }
-        res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers)
-        if res.status_code == 200:
+        try:
+            res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=15)
+            res.raise_for_status()
             echo_output = res.json()["echo_output"]
-            st.success("Journal submitted successfully!")
+
+            st.success("📝 Journal submitted successfully!")
             st.write("### 🧠 Echo's Reflection")
             st.write("**Summary:**", echo_output["summary"])
             st.write("**Emotions:**", ", ".join(echo_output["emotions"]))
@@ -57,8 +58,8 @@ if token:
             st.write("**Questions:**")
             for q in echo_output["questions"]:
                 st.write(f"- {q}")
-        else:
-            st.error("Something went wrong submitting your journal.")
 
-else:
-    st.info("Please log in to submit entries.")
+        except requests.exceptions.RequestException as e:
+            st.error(f"❌ Failed to submit journal: {e}")
+
+    st.sidebar.success("✅ You are logged in.")
