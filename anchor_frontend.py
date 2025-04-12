@@ -7,16 +7,18 @@ API_URL = "https://anchor-app.onrender.com"  # Public backend URL
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
-# === Handle rerun after login safely ===
-if st.session_state.get("just_logged_in"):
+# === 🧠 Only rerun if token exists and just_logged_in is set ===
+if (
+    st.session_state.get("just_logged_in") 
+    and st.session_state.get("token")
+):
     st.session_state["just_logged_in"] = False
     st.experimental_rerun()
 
-# === LOGIN VIEW ===
+# === LOGIN FLOW ===
 if "token" not in st.session_state:
     st.sidebar.subheader("🔐 Login")
 
-    # Capture inputs
     username = st.sidebar.text_input("Username")
     password = st.sidebar.text_input("Password", type="password")
 
@@ -34,15 +36,15 @@ if "token" not in st.session_state:
                 st.session_state["token"] = token
                 st.session_state["username"] = username
                 st.session_state["just_logged_in"] = True
+                # Let the rerun happen next cycle
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
         except RequestException as e:
             st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
 
-    # Info while logged out
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL VIEW ===
+# === JOURNAL FLOW ===
 else:
     st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
