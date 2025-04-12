@@ -7,26 +7,22 @@ API_URL = "https://anchor-app.onrender.com"
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
-# === SESSION DEFAULTS ===
+# === SESSION INITIALIZATION ===
 if "token" not in st.session_state:
     st.session_state["token"] = None
 if "username" not in st.session_state:
     st.session_state["username"] = None
-if "view" not in st.session_state:
-    st.session_state["view"] = "login"  # "login" or "journal"
 
-# === SIDEBAR STATUS ===
-if st.session_state["token"]:
-    st.sidebar.success("✅ You are logged in.")
-else:
+# === LOGIN FORM ===
+if not st.session_state["token"]:
     st.sidebar.subheader("🔐 Login")
 
-# === LOGIN VIEW ===
-if st.session_state["view"] == "login":
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
 
-    if st.sidebar.button("Login"):
+    login_clicked = st.sidebar.button("Login")
+
+    if login_clicked:
         try:
             response = requests.post(
                 f"{API_URL}/login",
@@ -39,8 +35,8 @@ if st.session_state["view"] == "login":
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
-                st.session_state["view"] = "journal"
                 st.sidebar.success("✅ Logged in!")
+                st.experimental_rerun()
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
         except RequestException as e:
@@ -48,8 +44,9 @@ if st.session_state["view"] == "login":
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL VIEW ===
-elif st.session_state["view"] == "journal":
+# === JOURNAL FORM ===
+else:
+    st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
 
     entry_text = st.text_area("What’s on your mind today?")
@@ -62,9 +59,11 @@ elif st.session_state["view"] == "journal":
         }
 
         try:
-            res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=15)
+            res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=20)
             res.raise_for_status()
-            echo_output = res.json()["echo_output"]
+            response_data = res.json()
+            echo_output = response_data.get("echo_output", {})
+            echo_thoughts = response_data.get("echo_thoughts", "")
 
             st.success("📝 Journal submitted successfully!")
             st.write("### 🧠 Echo's Reflection")
@@ -78,6 +77,11 @@ elif st.session_state["view"] == "journal":
             st.write("**Questions:**")
             for q in echo_output.get("questions", []):
                 st.write(f"- {q}")
+
+            if echo_thoughts:
+                st.markdown("---")
+                st.write("### 💬 Echo’s Thoughts")
+                st.info(echo_thoughts)
 
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
