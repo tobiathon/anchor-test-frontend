@@ -2,29 +2,31 @@ import streamlit as st
 import requests
 from requests.exceptions import RequestException
 
-API_URL = "https://anchor-app.onrender.com"  # Public backend URL
+API_URL = "https://anchor-app.onrender.com"
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
-# === 🧠 Only rerun if token exists and just_logged_in is set ===
-# Defer rerun using a callback placeholder at the bottom
-def safe_rerun():
-    st.session_state["just_logged_in"] = False
-    st.experimental_rerun()
-
-# === LOGIN FLOW ===
+# === SESSION INITIALIZATION ===
 if "token" not in st.session_state:
+    st.session_state["token"] = None
+if "username" not in st.session_state:
+    st.session_state["username"] = None
+
+# === LOGIN FORM ===
+if not st.session_state["token"]:
     st.sidebar.subheader("🔐 Login")
 
-    username = st.sidebar.text_input("Username")
-    password = st.sidebar.text_input("Password", type="password")
+    username_input = st.sidebar.text_input("Username")
+    password_input = st.sidebar.text_input("Password", type="password")
 
-    if st.sidebar.button("Login"):
+    login_clicked = st.sidebar.button("Login")
+
+    if login_clicked:
         try:
             response = requests.post(
                 f"{API_URL}/login",
-                data={"username": username, "password": password},
+                data={"username": username_input, "password": password_input},
                 timeout=20
             )
             response.raise_for_status()
@@ -32,9 +34,8 @@ if "token" not in st.session_state:
 
             if token:
                 st.session_state["token"] = token
-                st.session_state["username"] = username
-                st.session_state["just_logged_in"] = True
-                # Let the rerun happen next cycle
+                st.session_state["username"] = username_input
+                st.sidebar.success("✅ Logged in!")
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
         except RequestException as e:
@@ -42,7 +43,7 @@ if "token" not in st.session_state:
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL FLOW ===
+# === JOURNAL FORM ===
 else:
     st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
@@ -76,7 +77,3 @@ else:
 
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
-
-# === Final: trigger rerun if login just happened, but only after render
-if st.session_state.get("just_logged_in") and st.session_state.get("token"):
-    st.button("...", on_click=safe_rerun, args=[])
