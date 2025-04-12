@@ -15,23 +15,24 @@ import requests
 from requests.exceptions import RequestException
 
 if st.sidebar.button("Login"):
-
     try:
         response = requests.post(
             f"{API_URL}/login",
             data={"username": username, "password": password},
-            timeout=20  # optional but recommended
+            timeout=20
         )
-        response.raise_for_status()
-    except RequestException as e:
-        st.error(f"⚠️ Could not connect to backend: {e}")
-        st.stop()
-        if response.status_code == 200:
-            token = response.json()["access_token"]
+        response.raise_for_status()  # will raise if status >= 400
+
+        token = response.json().get("access_token")
+        if token:
             st.session_state["token"] = token
-            st.sidebar.success("Logged in!")
+            st.sidebar.success("✅ Logged in!")
+            st.stop()
         else:
-            st.sidebar.error("Invalid login.")
+            st.sidebar.error("❌ Login failed — no token received.")
+
+    except RequestException as e:
+        st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
 
 # === JOURNAL FORM ===
 if token:
