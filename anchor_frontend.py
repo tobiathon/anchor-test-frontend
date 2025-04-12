@@ -63,7 +63,7 @@ else:
             res.raise_for_status()
             response_data = res.json()
             echo_output = response_data.get("echo_output", {})
-            echo_thoughts = response_data.get("echo_thoughts", "")
+            echo_thoughts = echo_output.get("echo_thoughts", "")
 
             st.success("📝 Journal submitted successfully!")
             st.write("### 🧠 Echo's Reflection")
