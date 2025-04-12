@@ -7,23 +7,22 @@ API_URL = "https://anchor-app.onrender.com"
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
-# === SESSION INITIALIZATION ===
+# === SESSION DEFAULTS ===
 if "token" not in st.session_state:
     st.session_state["token"] = None
 if "username" not in st.session_state:
     st.session_state["username"] = None
-if "login_successful" not in st.session_state:
-    st.session_state["login_successful"] = False
+if "view" not in st.session_state:
+    st.session_state["view"] = "login"  # "login" or "journal"
 
-# === SAFE RERUN AFTER LOGIN ===
-if st.session_state["login_successful"] and st.session_state["token"]:
-    st.session_state["login_successful"] = False
-    st.experimental_rerun()
-
-# === LOGIN FORM ===
-if not st.session_state["token"]:
+# === SIDEBAR ===
+if st.session_state["token"]:
+    st.sidebar.success("✅ You are logged in.")
+else:
     st.sidebar.subheader("🔐 Login")
 
+# === LOGIN VIEW ===
+if st.session_state["view"] == "login":
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
 
@@ -40,7 +39,7 @@ if not st.session_state["token"]:
             if token:
                 st.session_state["token"] = token
                 st.session_state["username"] = username_input
-                st.session_state["login_successful"] = True
+                st.session_state["view"] = "journal"  # 👈 SWITCH HERE
                 st.sidebar.success("✅ Logged in!")
             else:
                 st.sidebar.error("❌ Login failed — no token received.")
@@ -49,9 +48,8 @@ if not st.session_state["token"]:
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL FORM ===
-else:
-    st.sidebar.success("✅ You are logged in.")
+# === JOURNAL VIEW ===
+elif st.session_state["view"] == "journal":
     st.subheader("📓 New Journal Entry")
 
     entry_text = st.text_area("What’s on your mind today?")
