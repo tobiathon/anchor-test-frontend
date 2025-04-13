@@ -15,6 +15,8 @@ if "username" not in st.session_state:
     st.session_state["username"] = None
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
+if "chat_input" not in st.session_state:
+    st.session_state["chat_input"] = ""
 
 # === LOGIN FORM ===
 if not st.session_state["token"]:
