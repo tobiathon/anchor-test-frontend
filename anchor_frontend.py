@@ -1,3 +1,4 @@
+
 import streamlit as st
 import requests
 from requests.exceptions import RequestException
@@ -13,6 +14,8 @@ if "token" not in st.session_state:
     st.session_state["token"] = None
 if "username" not in st.session_state:
     st.session_state["username"] = None
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
 
 # === LOGIN FORM ===
 if not st.session_state["token"]:
@@ -45,7 +48,7 @@ if not st.session_state["token"]:
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL FORM ===
+# === JOURNAL FORM + CHAT ===
 else:
     st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
@@ -87,34 +90,35 @@ else:
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
 
-    # ==== Chat with Echo ====
+    # Chat interface
     st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
-    chat_input = st.text_area("Ask Echo anything...", key="chat_input", height=100)
+    chat_input = st.text_area("Type your message to Echo", key="chat_input_scroll", height=100)
 
-    if st.button("Send to Echo"):
+    if st.button("Send"):
         if chat_input.strip():
-            chat_payload = {
+            headers = {"Authorization": f"Bearer {st.session_state['token']}"}
+            payload = {
                 "user_id": st.session_state["username"],
                 "message": chat_input.strip()
             }
-            headers = {"Authorization": f"Bearer {st.session_state['token']}"}
 
             try:
-                chat_res = requests.post(
-                    f"{API_URL}/chat/echo_chat",
-                    json=chat_payload,
-                    headers=headers,
-                    timeout=20
-                )
-                chat_res.raise_for_status()
-                chat_response = chat_res.json().get("echo_response", "Echo is thinking...")
+                res = requests.post(f"{API_URL}/chat/echo_chat", json=payload, headers=headers, timeout=20)
+                res.raise_for_status()
+                echo_reply = res.json().get("echo_response", "Echo is reflecting...")
 
-                st.markdown("### 🗣️ Echo’s Reply")
-                st.info(chat_response)
-
+                st.session_state.chat_history.append(("user", chat_input.strip()))
+                st.session_state.chat_history.append(("echo", echo_reply))
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
         else:
-            st.warning("⚠️ Please enter a message before sending.")
+            st.warning("Please enter a message before sending.")
+
+    # Display chat history
+    for role, message in st.session_state.chat_history:
+        if role == "user":
+            st.markdown(f"**You:** {message}")
+        else:
+            st.markdown(f"**Echo:** {message}")
