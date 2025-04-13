@@ -92,8 +92,14 @@ else:
     st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
-    # Use temporary key to avoid conflict
-    chat_input = st.text_input("Type your message to Echo...", key="temp_chat_input")
+    # Show chat history
+    for sender, message in st.session_state.chat_history:
+        if sender == "You":
+            st.markdown(f"**🧍‍♂️ You:** {message}")
+        else:
+            st.markdown(f"**🤖 Echo:** {message}")
+
+    chat_input = st.text_input("Type your message to Echo...")
 
     if st.button("Send"):
         if chat_input.strip():
@@ -112,17 +118,9 @@ else:
                 st.session_state.chat_history.append(("You", chat_input.strip()))
                 st.session_state.chat_history.append(("Echo", echo_reply))
 
-                # Clear the temporary input field
-                st.session_state["temp_chat_input"] = ""
+                # Don't reset input — let it naturally refresh
 
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
         else:
             st.warning("Please enter a message before sending.")
-
-    # Display full chat history
-    for sender, message in st.session_state.chat_history:
-        if sender == "You":
-            st.markdown(f"**🧍‍♂️ You:** {message}")
-        else:
-            st.markdown(f"**🤖 Echo:** {message}")
