@@ -15,8 +15,6 @@ if "username" not in st.session_state:
     st.session_state["username"] = None
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
-if "chat_input" not in st.session_state:
-    st.session_state["chat_input"] = ""
 
 # === LOGIN FORM ===
 if not st.session_state["token"]:
@@ -94,8 +92,8 @@ else:
     st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
-    # Initialize chat input and submit logic
-    chat_input = st.text_input("Type your message to Echo...", key="chat_input")
+    # Use temporary key to avoid conflict
+    chat_input = st.text_input("Type your message to Echo...", key="temp_chat_input")
 
     if st.button("Send"):
         if chat_input.strip():
@@ -114,9 +112,8 @@ else:
                 st.session_state.chat_history.append(("You", chat_input.strip()))
                 st.session_state.chat_history.append(("Echo", echo_reply))
 
-                # Set flag to clear and rerun
-                st.session_state["chat_input"] = ""
-                st.experimental_rerun()
+                # Clear the temporary input field
+                st.session_state["temp_chat_input"] = ""
 
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
