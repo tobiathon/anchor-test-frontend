@@ -114,8 +114,9 @@ else:
                 st.session_state.chat_history.append(("You", chat_input.strip()))
                 st.session_state.chat_history.append(("Echo", echo_reply))
 
-                # Clear input field
+                # Set flag to clear and rerun
                 st.session_state["chat_input"] = ""
+                st.experimental_rerun()
 
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
