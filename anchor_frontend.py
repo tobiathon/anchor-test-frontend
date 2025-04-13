@@ -3,7 +3,7 @@ import requests
 from requests.exceptions import RequestException
 
 API_URL = "https://anchor-app.onrender.com"
-#API_URL = "http://localhost:8000"  # ✅ For local testing
+#API_URL = "http://localhost:8000"  # ✅ For local testing #for testing, toggle above or this
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
@@ -45,7 +45,7 @@ if not st.session_state["token"]:
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL FORM + CHAT ===
+# === JOURNAL FORM ===
 else:
     st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
@@ -60,7 +60,7 @@ else:
         }
 
         try:
-            res = requests.post(f"{API_URL}/journal/upload_journal", json=payload, headers=headers, timeout=20)
+            res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=20)
             res.raise_for_status()
             response_data = res.json()
             echo_output = response_data.get("echo_output", {})
@@ -87,11 +87,12 @@ else:
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
 
-    # === CHAT WITH ECHO ===
+    # ==== Chat with Echo ====
     st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
     chat_input = st.text_area("Ask Echo anything...", key="chat_input", height=100)
+
     if st.button("Send to Echo"):
         if chat_input.strip():
             chat_payload = {
@@ -116,4 +117,4 @@ else:
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
         else:
-            st.warning("Please enter a message before sending.")
+            st.warning("⚠️ Please enter a message before sending.")
