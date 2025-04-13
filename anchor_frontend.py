@@ -3,7 +3,7 @@ import requests
 from requests.exceptions import RequestException
 
 API_URL = "https://anchor-app.onrender.com"
-#API_URL = "http://localhost:8000"  # ✅ For local testing #for testing, toggle above or this
+#API_URL = "http://localhost:8000"  # ✅ For local testing
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
@@ -29,7 +29,7 @@ if not st.session_state["token"]:
                 f"{API_URL}/auth/login",
                 data={"username": username_input, "password": password_input},
                 timeout=20
-)
+            )
             response.raise_for_status()
             token = response.json().get("access_token")
 
@@ -45,7 +45,7 @@ if not st.session_state["token"]:
 
     st.info("🔐 Please log in to submit a journal entry.")
 
-# === JOURNAL FORM ===
+# === JOURNAL FORM + CHAT ===
 else:
     st.sidebar.success("✅ You are logged in.")
     st.subheader("📓 New Journal Entry")
@@ -60,7 +60,7 @@ else:
         }
 
         try:
-            res = requests.post(f"{API_URL}/upload_journal", json=payload, headers=headers, timeout=20)
+            res = requests.post(f"{API_URL}/journal/upload_journal", json=payload, headers=headers, timeout=20)
             res.raise_for_status()
             response_data = res.json()
             echo_output = response_data.get("echo_output", {})
@@ -86,3 +86,34 @@ else:
 
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
+
+    # === CHAT WITH ECHO ===
+    st.markdown("---")
+    st.subheader("💬 Chat with Echo")
+
+    chat_input = st.text_area("Ask Echo anything...", key="chat_input", height=100)
+    if st.button("Send to Echo"):
+        if chat_input.strip():
+            chat_payload = {
+                "user_id": st.session_state["username"],
+                "message": chat_input.strip()
+            }
+            headers = {"Authorization": f"Bearer {st.session_state['token']}"}
+
+            try:
+                chat_res = requests.post(
+                    f"{API_URL}/chat/echo_chat",
+                    json=chat_payload,
+                    headers=headers,
+                    timeout=20
+                )
+                chat_res.raise_for_status()
+                chat_response = chat_res.json().get("echo_response", "Echo is thinking...")
+
+                st.markdown("### 🗣️ Echo’s Reply")
+                st.info(chat_response)
+
+            except RequestException as e:
+                st.error(f"❌ Failed to contact Echo: {e}")
+        else:
+            st.warning("Please enter a message before sending.")
