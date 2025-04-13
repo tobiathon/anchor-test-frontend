@@ -1,10 +1,9 @@
-
 import streamlit as st
 import requests
 from requests.exceptions import RequestException
 
 API_URL = "https://anchor-app.onrender.com"
-#API_URL = "http://localhost:8000"  # ✅ For local testing #for testing, toggle above or this
+# API_URL = "http://localhost:8000"  # ✅ For local testing
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
@@ -23,7 +22,6 @@ if not st.session_state["token"]:
 
     username_input = st.sidebar.text_input("Username")
     password_input = st.sidebar.text_input("Password", type="password")
-
     login_clicked = st.sidebar.button("Login")
 
     if login_clicked:
@@ -90,11 +88,12 @@ else:
         except RequestException as e:
             st.error(f"❌ Failed to submit journal: {e}")
 
-    # Chat interface
+    # === Echo Chat Section ===
     st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
-    chat_input = st.text_area("Type your message to Echo", key="chat_input_scroll", height=100)
+    # Initialize chat input and submit logic
+    chat_input = st.text_input("Type your message to Echo...", key="chat_input")
 
     if st.button("Send"):
         if chat_input.strip():
@@ -109,16 +108,21 @@ else:
                 res.raise_for_status()
                 echo_reply = res.json().get("echo_response", "Echo is reflecting...")
 
-                st.session_state.chat_history.append(("user", chat_input.strip()))
-                st.session_state.chat_history.append(("echo", echo_reply))
+                # Append messages to chat history
+                st.session_state.chat_history.append(("You", chat_input.strip()))
+                st.session_state.chat_history.append(("Echo", echo_reply))
+
+                # Clear input field
+                st.session_state["chat_input"] = ""
+
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
         else:
             st.warning("Please enter a message before sending.")
 
-    # Display chat history
-    for role, message in st.session_state.chat_history:
-        if role == "user":
-            st.markdown(f"**You:** {message}")
+    # Display full chat history
+    for sender, message in st.session_state.chat_history:
+        if sender == "You":
+            st.markdown(f"**🧍‍♂️ You:** {message}")
         else:
-            st.markdown(f"**Echo:** {message}")
+            st.markdown(f"**🤖 Echo:** {message}")
