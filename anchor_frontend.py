@@ -5,13 +5,14 @@ from requests.exceptions import RequestException
 import time
 from streamlit_cookies_manager import EncryptedCookieManager
 
+st.set_page_config(page_title="Anchor Journal", layout="centered")
+
 COOKIE_MAX_AGE = 2592000
 cookies = EncryptedCookieManager(prefix="anchor_", password="my_secret_password")
 if not cookies.ready():
     st.stop()
 
 API_URL = "https://anchor-app.onrender.com"
-st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
 # === Session Initialization ===
