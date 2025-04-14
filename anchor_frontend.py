@@ -2,6 +2,15 @@ import streamlit as st
 import requests
 from requests.exceptions import RequestException
 import time
+from streamlit_cookies_manager import EncryptedCookieManager
+
+# Set the cookie max-age (30 days)
+COOKIE_MAX_AGE = 2592000  # in seconds
+
+# Initialize the cookie manager (use a strong secret in production)
+cookies = EncryptedCookieManager(prefix="anchor_", password="my_secret_password")
+if not cookies.ready():
+    st.stop()
 
 API_URL = "https://anchor-app.onrender.com"
 # API_URL = "http://localhost:8000"  # For local testing
@@ -10,10 +19,13 @@ st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
 # === SESSION INITIALIZATION ===
+# Load token and username from cookies if not already in session_state
 if "token" not in st.session_state:
-    st.session_state["token"] = None
+    st.session_state["token"] = cookies.get("token") if "token" in cookies else None
+
 if "username" not in st.session_state:
-    st.session_state["username"] = None
+    st.session_state["username"] = cookies.get("username") if "username" in cookies else None
+
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 if "rerun_triggered" not in st.session_state:
@@ -27,12 +39,16 @@ def logout():
     st.session_state["username"] = None
     st.session_state["chat_history"] = []
     st.session_state["remember_me"] = False
+    if "token" in cookies:
+        del cookies["token"]
+    if "username" in cookies:
+        del cookies["username"]
+    cookies.save()
     st.sidebar.info("You have been logged out.")
     time.sleep(1)
     try:
         st.experimental_rerun()
     except st.runtime.scriptrunner.RerunException:
-        # This exception is expected when rerunning the script.
         pass
 
 # === LOGIN + SIGNUP FORM ===
@@ -41,10 +57,10 @@ if not st.session_state["token"]:
 
     with tab_login:
         st.subheader("Login")
-        username_input = st.text_input("Username")
-        password_input = st.text_input("Password", type="password")
-        remember_me = st.checkbox("Remember me")
-        login_clicked = st.button("Login")
+        username_input = st.text_input("Username", key="login_username")
+        password_input = st.text_input("Password", type="password", key="login_password")
+        remember_me = st.checkbox("Remember me", key="remember_me_checkbox")
+        login_clicked = st.button("Login", key="login_button")
 
         if login_clicked:
             try:
@@ -61,6 +77,13 @@ if not st.session_state["token"]:
                     st.session_state["username"] = username_input
                     st.session_state["remember_me"] = remember_me
                     st.sidebar.success("✅ Logged in!")
+                    # If "Remember me" is checked, persist token and username in cookies.
+                    if remember_me:
+                        cookies["token"] = token
+                        cookies["username"] = username_input
+                        # If the library supports it, set cookie expiry (max_age)
+                        # (Customize the library or use an alternative if needed for max_age)
+                        cookies.save()
                     st.session_state["rerun_triggered"] = True
                     try:
                         st.experimental_rerun()
@@ -73,9 +96,10 @@ if not st.session_state["token"]:
 
     with tab_signup:
         st.subheader("Create Account")
-        new_username = st.text_input("New Username")
-        new_password = st.text_input("New Password", type="password")
-        create_clicked = st.button("Sign Up")
+        # Use distinct keys to avoid conflicts with the login form.
+        new_username = st.text_input("New Username", key="signup_username")
+        new_password = st.text_input("New Password", type="password", key="signup_password")
+        create_clicked = st.button("Sign Up", key="signup_button")
 
         if create_clicked:
             try:
