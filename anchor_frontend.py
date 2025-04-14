@@ -121,9 +121,23 @@ else:
     with st.container():
         for sender, message in st.session_state.chat_history:
             if sender == "You":
-                st.markdown(f"<div style='text-align:right;background:#dcf8c6;padding:10px;border-radius:10px;margin:5px 0'>{message}</div>", unsafe_allow_html=True)
+                st.markdown(
+                    f"""
+                    <div style='text-align:right;background:#f5f5f5;color:#000;padding:10px 14px;border-radius:12px;margin:6px 0;max-width:80%;margin-left:auto'>
+                        {message}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
             else:
-                st.markdown(f"<div style='text-align:left;background:#e3e3e3;padding:10px;border-radius:10px;margin:5px 0'>{message}</div>", unsafe_allow_html=True)
+                st.markdown(
+                    f"""
+                    <div style='text-align:left;background:#ffffff;color:#000;padding:10px 14px;border-radius:12px;margin:6px 0;max-width:80%;margin-right:auto'>
+                        {message}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
     with st.form(key="chat_form"):
         chat_input = st.text_input("Type your message...")
