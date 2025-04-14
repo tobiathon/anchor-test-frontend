@@ -4,7 +4,7 @@ from requests.exceptions import RequestException
 import time
 
 API_URL = "https://anchor-app.onrender.com"
-# API_URL = "http://localhost:8000"  # ✅ For local testing
+# API_URL = "http://localhost:8000"  # For local testing
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
@@ -29,7 +29,11 @@ def logout():
     st.session_state["remember_me"] = False
     st.sidebar.info("You have been logged out.")
     time.sleep(1)
-    st.experimental_rerun()
+    try:
+        st.experimental_rerun()
+    except st.runtime.scriptrunner.RerunException:
+        # This exception is expected when rerunning the script.
+        pass
 
 # === LOGIN + SIGNUP FORM ===
 if not st.session_state["token"]:
@@ -58,7 +62,10 @@ if not st.session_state["token"]:
                     st.session_state["remember_me"] = remember_me
                     st.sidebar.success("✅ Logged in!")
                     st.session_state["rerun_triggered"] = True
-                    st.experimental_rerun()
+                    try:
+                        st.experimental_rerun()
+                    except st.runtime.scriptrunner.RerunException:
+                        pass
                 else:
                     st.sidebar.error("❌ Login failed — no token received.")
             except RequestException as e:
