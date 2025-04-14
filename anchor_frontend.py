@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from requests.exceptions import RequestException
+import time
 
 API_URL = "https://anchor-app.onrender.com"
 # API_URL = "http://localhost:8000"  # ✅ For local testing
@@ -15,6 +16,20 @@ if "username" not in st.session_state:
     st.session_state["username"] = None
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
+if "rerun_triggered" not in st.session_state:
+    st.session_state["rerun_triggered"] = False
+if "remember_me" not in st.session_state:
+    st.session_state["remember_me"] = False
+
+# === LOGOUT & CLEAR CACHE ===
+def logout():
+    st.session_state["token"] = None
+    st.session_state["username"] = None
+    st.session_state["chat_history"] = []
+    st.session_state["remember_me"] = False
+    st.sidebar.info("You have been logged out.")
+    time.sleep(1)
+    st.experimental_rerun()
 
 # === LOGIN + SIGNUP FORM ===
 if not st.session_state["token"]:
@@ -40,9 +55,8 @@ if not st.session_state["token"]:
                 if token:
                     st.session_state["token"] = token
                     st.session_state["username"] = username_input
+                    st.session_state["remember_me"] = remember_me
                     st.sidebar.success("✅ Logged in!")
-
-                    # Use Streamlit's built-in rerun only inside safe update scope
                     st.session_state["rerun_triggered"] = True
                     st.experimental_rerun()
                 else:
@@ -73,6 +87,9 @@ if not st.session_state["token"]:
 # === JOURNAL FORM + CHAT ===
 else:
     st.sidebar.success("✅ You are logged in.")
+    if st.sidebar.button("🚪 Logout"):
+        logout()
+
     st.subheader("📓 New Journal Entry")
 
     entry_text = st.text_area("What’s on your mind today?")
@@ -116,7 +133,6 @@ else:
     st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
-    # Show chat history
     for sender, message in st.session_state.chat_history:
         if sender == "You":
             st.markdown(f"**🧍‍♂️ You:** {message}")
@@ -138,7 +154,6 @@ else:
                 res.raise_for_status()
                 echo_reply = res.json().get("echo_response", "Echo is reflecting...")
 
-                # Append messages to chat history
                 st.session_state.chat_history.append(("You", chat_input.strip()))
                 st.session_state.chat_history.append(("Echo", echo_reply))
 
