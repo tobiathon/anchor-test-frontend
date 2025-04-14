@@ -16,33 +16,57 @@ if "username" not in st.session_state:
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 
-# === LOGIN FORM ===
+# === LOGIN + SIGNUP FORM ===
 if not st.session_state["token"]:
-    st.sidebar.subheader("🔐 Login")
+    tab_login, tab_signup = st.sidebar.tabs(["🔐 Login", "🆕 Sign Up"])
 
-    username_input = st.sidebar.text_input("Username")
-    password_input = st.sidebar.text_input("Password", type="password")
-    login_clicked = st.sidebar.button("Login")
+    with tab_login:
+        st.subheader("Login")
+        username_input = st.text_input("Username")
+        password_input = st.text_input("Password", type="password")
+        remember_me = st.checkbox("Remember me")
+        login_clicked = st.button("Login")
 
-    if login_clicked:
-        try:
-            response = requests.post(
-                f"{API_URL}/auth/login",
-                data={"username": username_input, "password": password_input},
-                timeout=20
-            )
-            response.raise_for_status()
-            token = response.json().get("access_token")
+        if login_clicked:
+            try:
+                response = requests.post(
+                    f"{API_URL}/auth/login",
+                    data={"username": username_input, "password": password_input},
+                    timeout=20
+                )
+                response.raise_for_status()
+                token = response.json().get("access_token")
 
-            if token:
-                st.session_state["token"] = token
-                st.session_state["username"] = username_input
-                st.sidebar.success("✅ Logged in!")
-                st.experimental_rerun()
-            else:
-                st.sidebar.error("❌ Login failed — no token received.")
-        except RequestException as e:
-            st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
+                if token:
+                    st.session_state["token"] = token
+                    st.session_state["username"] = username_input
+                    st.sidebar.success("✅ Logged in!")
+
+                    # Use Streamlit's built-in rerun only inside safe update scope
+                    st.session_state["rerun_triggered"] = True
+                    st.experimental_rerun()
+                else:
+                    st.sidebar.error("❌ Login failed — no token received.")
+            except RequestException as e:
+                st.sidebar.error(f"⚠️ Could not connect to backend: {e}")
+
+    with tab_signup:
+        st.subheader("Create Account")
+        new_username = st.text_input("New Username")
+        new_password = st.text_input("New Password", type="password")
+        create_clicked = st.button("Sign Up")
+
+        if create_clicked:
+            try:
+                response = requests.post(
+                    f"{API_URL}/auth/signup",
+                    data={"username": new_username, "password": new_password},
+                    timeout=20
+                )
+                response.raise_for_status()
+                st.sidebar.success("✅ Account created! Please log in.")
+            except RequestException as e:
+                st.sidebar.error(f"❌ Failed to create account: {e}")
 
     st.info("🔐 Please log in to submit a journal entry.")
 
@@ -117,8 +141,6 @@ else:
                 # Append messages to chat history
                 st.session_state.chat_history.append(("You", chat_input.strip()))
                 st.session_state.chat_history.append(("Echo", echo_reply))
-
-                # Don't reset input — let it naturally refresh
 
             except RequestException as e:
                 st.error(f"❌ Failed to contact Echo: {e}")
