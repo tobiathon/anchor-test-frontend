@@ -1,4 +1,8 @@
 import streamlit as st
+
+# Set page config right after importing streamlit.
+st.set_page_config(page_title="Anchor Journal", layout="centered")
+
 import requests
 from requests.exceptions import RequestException
 import time
@@ -15,7 +19,6 @@ if not cookies.ready():
 API_URL = "https://anchor-app.onrender.com"
 # API_URL = "http://localhost:8000"  # For local testing
 
-st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
 # === SESSION INITIALIZATION ===
