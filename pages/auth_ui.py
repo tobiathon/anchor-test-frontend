@@ -1,9 +1,9 @@
 # File: frontend/utils/auth.py
 
 import streamlit as st
-from frontend.utils.cookies import set_cookie, clear_cookies
-from frontend.utils.api import login_user as api_login_user, signup_user as api_signup_user
-from frontend.utils.session_manager import logout_handler
+from utils.cookies import set_cookie, clear_cookies
+from utils.api import login_user as api_login_user, signup_user as api_signup_user
+from utils.session_manager import logout_handler
 
 def login_user(username: str, password: str, remember_me: bool = False):
     token = api_login_user(username, password)
