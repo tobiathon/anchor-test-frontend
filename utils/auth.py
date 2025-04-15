@@ -28,7 +28,10 @@ def login_user(username, password, remember_me):
                 cookies["token"] = token
                 cookies["username"] = username
                 cookies.save()
-            return True, None
+
+            st.rerun()  # 🔁 Trigger app to refresh with login state
+
+            return True, None  # Optional: this line won't be reached after rerun
         else:
             return False, "Login failed — no token received."
 

@@ -4,12 +4,12 @@ import streamlit as st
 from utils.api import send_chat_message
 from components.chat_bubble import render_chat_bubble
 
-# === Chat UI ===
-def chat_ui():
+def render_chat_interface():
+    st.markdown("---")
     st.subheader("💬 Chat with Echo")
 
     with st.container():
-        for sender, message in st.session_state.chat_history:
+        for sender, message in st.session_state.get("chat_history", []):
             render_chat_bubble(sender, message)
 
     with st.form(key="chat_form"):

@@ -1,7 +1,7 @@
 # app.py
 import streamlit as st
 st.set_page_config(page_title="Anchor Journal", layout="centered")
-from pages.auth_ui import login_signup_flow
+from pages.auth_ui_logic import login_signup_flow
 from pages.journal import render_journal_entry_form
 from pages.chat import render_chat_interface
 from utils.session_manager import init_session_state, logout_handler
