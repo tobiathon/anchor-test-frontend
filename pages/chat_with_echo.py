@@ -29,6 +29,6 @@ if submitted and user_input.strip():
     echo_response = send_chat_message(user_input)
     if echo_response:
         st.session_state.chat_history.append(("Echo", echo_response))
-        st.experimental_rerun()
+        st.rerun()
     else:
         st.error("❌ Failed to get response from Echo.")
