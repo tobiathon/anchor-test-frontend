@@ -2,7 +2,7 @@
 
 import streamlit as st
 from utils.auth import login_user, signup_user, logout
-from utils.session import is_logged_in
+from utils.session_manager import is_logged_in
 
 
 def render_auth_ui():
