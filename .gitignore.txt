@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+env/
+.venv/
+venv/
+ENV/
+env.bak/
+env_old/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS metadata
+.DS_Store
+
+# VSCode settings
+.vscode/
+
+# Python egg metadata and distribution builds
+*.egg-info/
+dist/
+build/
+
+# Streamlit cache
+.streamlit/
+
+# Log files
+*.log
+
+# Sensitive config files (if applicable)
+.env
+.env.*
+
+# Pytest or test results
+.coverage
+htmlcov/
+.tox/
+.noseids
+pytest_cache/
+
+# Local database / SQLite
+*.db
+*.sqlite3
