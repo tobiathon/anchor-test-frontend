@@ -4,7 +4,7 @@
 import requests
 from requests.exceptions import RequestException
 import streamlit as st
-from utils.cookies import cookies
+from utils.cookies import get_cookie_manager
 
 API_URL = "https://anchor-app.onrender.com"
 
@@ -24,6 +24,7 @@ def login_user(username, password, remember_me):
             st.session_state["username"] = username
             st.session_state["remember_me"] = remember_me
             if remember_me:
+                cookies = get_cookie_manager()
                 cookies["token"] = token
                 cookies["username"] = username
                 cookies.save()
@@ -33,7 +34,6 @@ def login_user(username, password, remember_me):
 
     except RequestException as e:
         return False, f"Could not connect: {e}"
-
 
 # --- Signup Function ---
 def signup_user(new_username, new_password):
@@ -48,16 +48,18 @@ def signup_user(new_username, new_password):
     except RequestException as e:
         return False, f"Failed to create account: {e}"
 
-
 # --- Logout Function ---
 def logout():
     st.session_state["token"] = None
     st.session_state["username"] = None
     st.session_state["chat_history"] = []
     st.session_state["remember_me"] = False
+
+    cookies = get_cookie_manager()
     if "token" in cookies:
         del cookies["token"]
     if "username" in cookies:
         del cookies["username"]
     cookies.save()
+
     st.sidebar.info("You have been logged out.")
