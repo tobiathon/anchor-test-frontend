@@ -2,7 +2,7 @@
 
 import time
 import streamlit as st
-from frontend.utils.cookies import get_cookie_manager, clear_cookies
+from utils.cookies import get_cookie_manager, clear_cookies
 
 cookies = get_cookie_manager()
 
