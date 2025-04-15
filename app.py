@@ -1,6 +1,13 @@
 # app.py
+import sys
+import os
 import streamlit as st
+
+# Add the current directory (root of your project) to Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 st.set_page_config(page_title="Anchor Journal", layout="centered")
+
 from pages.auth_ui_logic import login_signup_flow
 from pages.journal import render_journal_entry_form
 from pages.chat import render_chat_interface
