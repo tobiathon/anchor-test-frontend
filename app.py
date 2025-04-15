@@ -18,14 +18,6 @@ try:
         if st.sidebar.button("🚪 Logout"):
             logout_handler()
 
-        # Optional tabbed layout — enable if desired:
-        # tab1, tab2 = st.tabs(["📓 Journal", "💬 Chat"])
-        # with tab1:
-        #     render_journal_entry_form()
-        # with tab2:
-        #     render_chat_interface()
-
-        # Current simple layout:
         render_journal_entry_form()
         render_chat_interface()
 
