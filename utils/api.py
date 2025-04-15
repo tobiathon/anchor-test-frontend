@@ -1,7 +1,6 @@
 # API request functions
 
-# File: frontend/utils/api.py
-
+# File: frontend/utils/api.pyres.raise_for_status()
 import requests
 import streamlit as st
 from requests.exceptions import RequestException
@@ -9,13 +8,19 @@ from requests.exceptions import RequestException
 API_URL = "https://anchor-app.onrender.com"  # Or "http://localhost:8000" for local testing
 
 def get_auth_headers():
-    return {"Authorization": f"Bearer {st.session_state['token']}"}
+    token = st.session_state.get("token")
+    return {"Authorization": f"Bearer {token}"} if token else {}
 
 def send_chat_message(message: str):
+    username = st.session_state.get("username")
+    if not username or not st.session_state.get("token"):
+        st.error("You must be logged in to chat with Echo.")
+        return None
+
     try:
         res = requests.post(
             f"{API_URL}/chat/echo_chat",
-            json={"user_id": st.session_state["username"], "message": message},
+            json={"user_id": username, "message": message},
             headers=get_auth_headers(),
             timeout=20
         )
@@ -26,10 +31,15 @@ def send_chat_message(message: str):
         return None
 
 def submit_journal_entry(entry_text: str):
+    username = st.session_state.get("username")
+    if not username or not st.session_state.get("token"):
+        st.error("You must be logged in to submit a journal entry.")
+        return None
+
     try:
         res = requests.post(
             f"{API_URL}/upload_journal",
-            json={"user_id": st.session_state["username"], "entry_text": entry_text},
+            json={"user_id": username, "entry_text": entry_text},
             headers=get_auth_headers(),
             timeout=20
         )
@@ -64,3 +74,4 @@ def signup_user(username: str, password: str):
     except RequestException as e:
         st.sidebar.error(f"❌ Failed to create account: {e}")
         return False
+        
