@@ -1,9 +1,9 @@
 # app.py
 import streamlit as st
-from frontend.auth import login_signup_flow
-from frontend.journal import render_journal_entry_form
-from frontend.chat import render_chat_interface
-from frontend.utils.session_manager import init_session_state, logout_handler
+from pages.auth_ui import login_signup_flow
+from pages.journal import render_journal_entry_form
+from pages.chat import render_chat_interface
+from utils.session_manager import init_session_state, logout_handler
 
 st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
