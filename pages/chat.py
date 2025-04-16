@@ -21,7 +21,7 @@ def render_chat_interface():
         if echo_reply:
             st.session_state.chat_history.append(("You", chat_input.strip()))
             st.session_state.chat_history.append(("Echo", echo_reply))
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("❌ Failed to get response from Echo.")
     elif submit_chat:

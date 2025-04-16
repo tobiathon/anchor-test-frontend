@@ -27,4 +27,4 @@ def logout_handler():
     clear_cookies()
     st.sidebar.info("You have been logged out.")
     time.sleep(1)
-    st.experimental_rerun()
+    st.rerun()
