@@ -20,6 +20,6 @@ def login_form():
             st.session_state["remember_me"] = remember_me
             if remember_me:
                 save_token_cookie(token, username_input)
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.sidebar.error("❌ Login failed.")
