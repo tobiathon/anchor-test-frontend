@@ -11,10 +11,15 @@ def get_cookie_manager():
         st.stop()
     return cookies
 
-def set_cookie(key, value):
-    cookies = get_cookie_manager()
-    cookies[key] = value
-    cookies.save()
+def set_cookie(key, value, max_age_days=30):
+    st.session_state[f"_cookie_{key}"] = value
+    st.experimental_set_query_params(**{key: value})  # fallback way
+
+def get_cookie(key):
+    return st.session_state.get(f"_cookie_{key}", None)
+
+def delete_cookie(key):
+    st.session_state.pop(f"_cookie_{key}", None)
 
 def clear_cookies(keys=["token", "username"]):
     cookies = get_cookie_manager()
