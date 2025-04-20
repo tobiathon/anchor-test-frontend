@@ -29,7 +29,7 @@ def login_signup_flow():
         login_clicked = st.button("Login", key="login_button")
 
         if login_clicked:
-            success, token = login_user(username_input, password_input)
+            success, token = login_user(username_input, password_input, remember_me)
             if success:
                 set_session_state(username_input, token)
                 
