@@ -13,7 +13,6 @@ from pages.journal import render_journal_entry_form
 from pages.chat import render_chat_interface
 from utils.session_manager import init_session_state, logout_handler
 
-#st.set_page_config(page_title="Anchor Journal", layout="centered")
 st.title("🧠 Anchor Journal Portal")
 
 init_session_state()
@@ -23,6 +22,13 @@ try:
         login_signup_flow()
     else:
         st.sidebar.success("✅ You are logged in.")
+
+        # 🎛️ Add Echo Setup Link
+        st.sidebar.markdown("---")
+        st.sidebar.markdown("🧠 **Echo Settings**")
+        st.sidebar.page_link("pages/echo_setup.py", label="🎛️ Customize Echo")
+
+        # 🚪 Logout Button
         if st.sidebar.button("🚪 Logout"):
             logout_handler()
 
@@ -31,5 +37,3 @@ try:
 
 except Exception as e:
     st.error(f"Something went wrong: {e}")
-
-    #adding comment for git

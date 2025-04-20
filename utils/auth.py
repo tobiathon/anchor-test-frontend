@@ -38,6 +38,18 @@ def login_user(username, password, remember_me):
     except RequestException as e:
         return False, f"Could not connect: {e}"
 
+def register_user(username: str, password: str) -> bool:
+    try:
+        response = requests.post(
+            f"{API_URL}/auth/signup",
+            data={"username": username, "password": password},
+            timeout=10
+        )
+        return response.status_code == 200
+    except Exception as e:
+        print(f"❌ Failed to register user: {e}")
+        return False
+
 # --- Signup Function ---
 def signup_user(new_username, new_password):
     try:
