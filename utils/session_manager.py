@@ -18,6 +18,10 @@ def init_session_state():
     if "remember_me" not in st.session_state:
         st.session_state["remember_me"] = False
 
+def set_session_state(username, token):
+    st.session_state["username"] = username
+    st.session_state["token"] = token
+
 def logout_handler():
     st.session_state["token"] = None
     st.session_state["username"] = None
