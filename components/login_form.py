@@ -4,7 +4,7 @@
 
 import streamlit as st
 from utils.cookies import save_token_cookie
-from utils.api import login_user
+from utils.auth import login_user  # ✅ Switched from utils.api to utils.auth
 
 def login_form():
     st.subheader("Login")
@@ -13,8 +13,8 @@ def login_form():
     remember_me = st.checkbox("Remember me", key="remember_me_checkbox")
 
     if st.button("Login", key="login_button"):
-        token = login_user(username_input, password_input)
-        if token:
+        success, token = login_user(username_input, password_input, remember_me)
+        if success and token:
             st.session_state["token"] = token
             st.session_state["username"] = username_input
             st.session_state["remember_me"] = remember_me
