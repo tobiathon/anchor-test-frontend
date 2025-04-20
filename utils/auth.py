@@ -8,8 +8,9 @@ from utils.cookies import get_cookie_manager
 API_URL = "https://anchor-app.onrender.com"
 COOKIE_EXPIRY_SECONDS = 30 * 24 * 60 * 60  # 30 days
 
-# --- Login Function ---
 def login_user(username, password, remember_me=False):
+    print("✅ [auth.py] login_user called with remember_me =", remember_me)
+
     try:
         response = requests.post(
             f"{API_URL}/auth/login",
@@ -37,7 +38,6 @@ def login_user(username, password, remember_me=False):
     except RequestException as e:
         return False, f"Could not connect: {e}"
 
-# --- Register Function ---
 def register_user(username: str, password: str) -> bool:
     try:
         response = requests.post(
@@ -50,7 +50,6 @@ def register_user(username: str, password: str) -> bool:
         print(f"❌ Failed to register user: {e}")
         return False
 
-# --- Logout Function ---
 def logout():
     st.session_state["token"] = None
     st.session_state["username"] = None

@@ -49,18 +49,18 @@ def submit_journal_entry(entry_text: str):
         st.error(f"❌ Failed to submit journal: {e}")
         return None
 
-def login_user(username: str, password: str):
-    try:
-        res = requests.post(
-            f"{API_URL}/auth/login",
-            data={"username": username, "password": password},
-            timeout=20
-        )
-        res.raise_for_status()
-        return res.json().get("access_token")
-    except RequestException as e:
-        st.sidebar.error(f"⚠️ Could not connect: {e}")
-        return None
+#def login_user(username: str, password: str):
+ #   try:
+  #      res = requests.post(
+   #         f"{API_URL}/auth/login",
+    #        data={"username": username, "password": password},
+     #       timeout=20
+      #  )
+       # res.raise_for_status()
+        #return res.json().get("access_token")
+  #  except RequestException as e:
+   #     st.sidebar.error(f"⚠️ Could not connect: {e}")
+    #    return None
 
 def signup_user(username: str, password: str):
     try:

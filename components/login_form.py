@@ -1,10 +1,8 @@
-# Login UI
-
-# File: frontend/components/login_form.py
+# File: components/login_form.py
 
 import streamlit as st
 from utils.cookies import save_token_cookie
-from utils.auth import login_user  # ✅ Switched from utils.api to utils.auth
+from utils.auth import login_user
 
 def login_form():
     st.subheader("Login")
