@@ -8,6 +8,7 @@ from utils.cookies import get_cookie_manager
 API_URL = "https://anchor-app.onrender.com"
 COOKIE_EXPIRY_SECONDS = 30 * 24 * 60 * 60  # 30 days
 
+
 def login_user(username, password, remember_me=False):
     print("✅ [auth.py] login_user called with remember_me =", remember_me)
 

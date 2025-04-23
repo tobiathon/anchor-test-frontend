@@ -13,7 +13,9 @@ def get_auth_headers():
 
 def send_chat_message(message: str):
     username = st.session_state.get("username")
-    if not username or not st.session_state.get("token"):
+    token = st.session_state.get("token")
+
+    if not username or not token:
         st.error("You must be logged in to chat with Echo.")
         return None
 
@@ -21,12 +23,21 @@ def send_chat_message(message: str):
         res = requests.post(
             f"{API_URL}/chat/echo_chat",
             json={"user_id": username, "message": message},
-            headers=get_auth_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=20
         )
-        res.raise_for_status()
+
+        print("📬 Status Code:", res.status_code)
+        print("📦 Raw Response Text:", res.text)
+
+        if res.status_code != 200:
+            st.error(f"❌ Echo server responded with error {res.status_code}")
+            return None
+
         return res.json().get("echo_response", "")
+        
     except RequestException as e:
+        print("❌ Request Exception:", e)
         st.error(f"❌ Failed to contact Echo: {e}")
         return None
 
