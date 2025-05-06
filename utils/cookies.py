@@ -6,7 +6,13 @@ from streamlit_cookies_manager import EncryptedCookieManager
 COOKIE_MAX_AGE = 2592000  # 30 days
 
 def get_cookie_manager():
-    cookies = EncryptedCookieManager(prefix="anchor_", password="my_secret_password")
+    cookies = EncryptedCookieManager(
+        prefix="anchor_",
+        password="my_secret_password",
+        key="CookieManager",
+        secure=True,           # Force HTTPS cookies
+        samesite="None"         # Allow cross-site (iframe) cookies if needed
+    )
     if not cookies.ready():
         st.stop()
     return cookies
