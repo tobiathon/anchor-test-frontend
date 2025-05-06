@@ -14,7 +14,7 @@ from pages.chat import render_chat_interface
 from utils.session_manager import init_session_state, logout_handler
 
 # Initialize session state with cookies
-init_session_state(cookies)
+init_session_state()
 
 st.title("🧠 Anchor Journal Portal")
 
