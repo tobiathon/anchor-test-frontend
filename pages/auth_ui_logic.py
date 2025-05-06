@@ -5,7 +5,8 @@ from utils.auth import login_user, register_user
 from utils.session_manager import set_session_state
 
 def login_signup_flow():
-    # Tabs for Login and Signup
+    # No cookies passed anymore!
+
     tab_login, tab_signup = st.tabs(["🔐 Login", "🆕 Sign Up"])
 
     with tab_login:
