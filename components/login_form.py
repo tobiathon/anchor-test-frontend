@@ -26,6 +26,10 @@ def login_form():
             st.session_state["remember_me"] = remember_me
             if remember_me:
                 save_token_cookie(token, username_input)
-            st.rerun()
+            
+            cookies = get_cookie_manager()
+            st.write("✅ Current Cookies after login:", cookies.dump())
+
+            st.rerun()  # Only rerun after you show debug info
         else:
             st.sidebar.error("❌ Login failed.")
