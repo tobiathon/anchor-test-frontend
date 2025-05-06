@@ -2,10 +2,14 @@
 
 import streamlit as st
 from utils.cookies import save_token_cookie
+from utils.cookies import load_token_cookie
 from utils.auth import login_user
 
 def login_form():
     st.subheader("Login")
+    saved_token, saved_username = load_token_cookie()
+    if saved_username and not st.session_state.get("login_username"):
+        st.session_state["login_username"] = saved_username
     username_input = st.text_input("Username", key="login_username")
     password_input = st.text_input("Password", type="password", key="login_password")
     remember_me = st.checkbox("Remember me", key="remember_me_checkbox")
