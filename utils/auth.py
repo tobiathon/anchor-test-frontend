@@ -1,9 +1,8 @@
-# File: utils/auth.py
+# utils/auth.py
 
 import requests
 from requests.exceptions import RequestException
 import streamlit as st
-from utils.cookies import clear_cookies
 
 API_URL = "https://anchor-app.onrender.com"
 
