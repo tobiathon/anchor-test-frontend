@@ -23,8 +23,8 @@ init_session_state(cookies)
 st.title("🧠 Anchor Journal Portal")
 
 try:
-    if not st.session_state["token"]:
-        login_signup_flow()
+    if not st.session_state.get("token"):
+        login_signup_flow(cookies)  # ✅ Pass cookies here
     else:
         st.sidebar.success("✅ You are logged in.")
 

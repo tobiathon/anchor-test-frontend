@@ -1,20 +1,21 @@
+# File: pages/auth_ui_logic.py
+
 import streamlit as st
-from utils.auth import login_user, register_user
+from utils.auth import login_user, register_user, logout
 from utils.cookies import set_cookie, get_cookie, delete_cookie
 from utils.session_manager import set_session_state
 
-def login_signup_flow():
+def login_signup_flow(cookies):
     # If user is already logged in, show logout button
     if st.session_state.get("token"):
         with st.sidebar:
             st.markdown("---")
             if st.button("🚪 Logout"):
-                delete_cookie("username")
-                st.session_state.clear()
+                logout(cookies)  # Use proper full logout now
                 st.rerun()
 
     # Load cookies
-    saved_username = get_cookie("username")
+    saved_username = get_cookie(cookies, "username")
 
     # Tabs for Login and Signup
     tab_login, tab_signup = st.tabs(["🔐 Login", "🆕 Sign Up"])
@@ -32,11 +33,11 @@ def login_signup_flow():
             success, token = login_user(username_input, password_input, remember_me)
             if success:
                 set_session_state(username_input, token)
-                
+
                 if remember_me:
-                    set_cookie("username", username_input)
+                    set_cookie(cookies, "username", username_input)
                 else:
-                    delete_cookie("username")
+                    delete_cookie(cookies, "username")
 
                 st.success("✅ Logged in successfully.")
                 st.rerun()

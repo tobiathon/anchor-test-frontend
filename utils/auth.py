@@ -3,6 +3,7 @@
 import requests
 from requests.exceptions import RequestException
 import streamlit as st
+from utils.cookies import clear_cookies
 
 API_URL = "https://anchor-app.onrender.com"
 
@@ -22,7 +23,6 @@ def login_user(username, password, remember_me=False):
             st.session_state["token"] = token
             st.session_state["username"] = username
             st.session_state["remember_me"] = remember_me
-            # ❗ No cookie saving here anymore ❗
             return True, token
         else:
             return False, "Login failed — no token received."
@@ -42,15 +42,12 @@ def register_user(username: str, password: str) -> bool:
         print(f"❌ Failed to register user: {e}")
         return False
 
-def logout():
+def logout(cookies):
     st.session_state["token"] = None
     st.session_state["username"] = None
     st.session_state["chat_history"] = []
     st.session_state["remember_me"] = False
 
-    cookies = get_cookie_manager()
-    cookies.delete("token")
-    cookies.delete("username")
-    cookies.save()
+    clear_cookies(cookies=cookies)
 
     st.sidebar.info("You have been logged out.")
