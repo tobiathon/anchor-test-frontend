@@ -7,9 +7,13 @@ from utils.auth import login_user
 
 def login_form():
     st.subheader("Login")
+    #Load Cookies
     saved_token, saved_username = load_token_cookie()
-    if saved_username and not st.session_state.get("login_username"):
+    if saved_username and "login_username" not in st.session_state:
         st.session_state["login_username"] = saved_username
+    if saved_token and "token" not in st.session_state:
+        st.session_state["token"] = saved_token
+    #Build the form    
     username_input = st.text_input("Username", key="login_username")
     password_input = st.text_input("Password", type="password", key="login_password")
     remember_me = st.checkbox("Remember me", key="remember_me_checkbox")
