@@ -11,38 +11,40 @@ def get_cookie_manager():
         st.stop()
     return cookies
 
-def set_cookie(key, value, max_age_days=30):
-    cookies = get_cookie_manager()
+def set_cookie(cookies, key, value, max_age_days=30):
     cookies[key] = value
     cookies.save()
 
-def get_cookie(key):
-    cookies = get_cookie_manager()
+def get_cookie(cookies, key):
     return cookies.get(key)
 
-def delete_cookie(key):
-    cookies = get_cookie_manager()
+def delete_cookie(cookies, key):
     if key in cookies:
         del cookies[key]
     cookies.save()
 
-def clear_cookies(keys=["token", "username"], cookies=None):
-    if cookies is None:
-        cookies = get_cookie_manager()
+def clear_cookies(cookies, keys=["token", "username"]):
     for key in keys:
         if key in cookies:
             del cookies[key]
     cookies.save()
 
-def save_cookies(data: dict):
-    cookies = get_cookie_manager()
+def save_cookies(cookies, data: dict):
     for key, value in data.items():
         cookies[key] = value
     cookies.save()
 
-def save_token_cookie(token, username):
+def save_token_cookie(cookies, token, username):
     """
-    Save token and username into cookies using the same cookie manager.
+    Save token and username into cookies using the provided cookie manager.
     """
-    set_cookie("token", token)
-    set_cookie("username", username)
+    set_cookie(cookies, "token", token)
+    set_cookie(cookies, "username", username)
+
+def load_token_cookie(cookies):
+    """
+    Load token and username from cookies.
+    """
+    token = cookies.get("token")
+    username = cookies.get("username")
+    return token, username
