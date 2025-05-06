@@ -38,3 +38,10 @@ def save_cookies(data: dict):
     for key, value in data.items():
         cookies[key] = value
     cookies.save()
+
+def save_token_cookie(token, username):
+    """
+    Save token and username into cookies using the same cookie manager.
+    """
+    set_cookie("token", token)
+    set_cookie("username", username)
