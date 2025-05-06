@@ -3,11 +3,8 @@
 import requests
 from requests.exceptions import RequestException
 import streamlit as st
-from utils.cookies import get_cookie_manager
 
 API_URL = "https://anchor-app.onrender.com"
-COOKIE_EXPIRY_SECONDS = 30 * 24 * 60 * 60  # 30 days
-
 
 def login_user(username, password, remember_me=False):
     print("✅ [auth.py] login_user called with remember_me =", remember_me)
@@ -25,13 +22,7 @@ def login_user(username, password, remember_me=False):
             st.session_state["token"] = token
             st.session_state["username"] = username
             st.session_state["remember_me"] = remember_me
-
-            if remember_me:
-                cookies = get_cookie_manager()
-                cookies.set("token", token, max_age=COOKIE_EXPIRY_SECONDS)
-                cookies.set("username", username, max_age=COOKIE_EXPIRY_SECONDS)
-                cookies.save()
-
+            # ❗ No cookie saving here anymore ❗
             return True, token
         else:
             return False, "Login failed — no token received."

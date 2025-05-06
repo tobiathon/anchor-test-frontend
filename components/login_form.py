@@ -1,19 +1,22 @@
-# File: components/login_form.py
-
 import streamlit as st
-from utils.cookies import save_token_cookie
-from utils.cookies import load_token_cookie
+from utils.cookies import save_token_cookie, load_token_cookie, get_cookie_manager
 from utils.auth import login_user
+
+# Create cookies manager ONCE
+cookies = get_cookie_manager()
 
 def login_form():
     st.subheader("Login")
-    #Load Cookies
+
+    # Load cookies
     saved_token, saved_username = load_token_cookie()
+
     if saved_username and "login_username" not in st.session_state:
         st.session_state["login_username"] = saved_username
     if saved_token and "token" not in st.session_state:
         st.session_state["token"] = saved_token
-    #Build the form    
+
+    # Build the form
     username_input = st.text_input("Username", key="login_username")
     password_input = st.text_input("Password", type="password", key="login_password")
     remember_me = st.checkbox("Remember me", key="remember_me_checkbox")
@@ -26,10 +29,10 @@ def login_form():
             st.session_state["remember_me"] = remember_me
             if remember_me:
                 save_token_cookie(token, username_input)
-            
-            cookies = get_cookie_manager()
+
+            # Use already-created cookies object if needed
             st.write("✅ Current Cookies after login:", cookies.dump())
 
-            st.rerun()  # Only rerun after you show debug info
+            st.rerun()
         else:
             st.sidebar.error("❌ Login failed.")
