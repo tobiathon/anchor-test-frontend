@@ -26,8 +26,9 @@ def delete_cookie(key):
         del cookies[key]
     cookies.save()
 
-def clear_cookies(keys=["token", "username"]):
-    cookies = get_cookie_manager()
+def clear_cookies(keys=["token", "username"], cookies=None):
+    if cookies is None:
+        cookies = get_cookie_manager()
     for key in keys:
         if key in cookies:
             del cookies[key]

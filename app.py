@@ -11,11 +11,16 @@ st.set_page_config(page_title="Anchor Journal", layout="centered")
 from pages.auth_ui_logic import login_signup_flow
 from pages.journal import render_journal_entry_form
 from pages.chat import render_chat_interface
+from utils.cookies import get_cookie_manager
 from utils.session_manager import init_session_state, logout_handler
 
-st.title("🧠 Anchor Journal Portal")
+# Get the cookie manager
+cookies = get_cookie_manager()
 
-init_session_state()
+# Initialize session state with cookies
+init_session_state(cookies)
+
+st.title("🧠 Anchor Journal Portal")
 
 try:
     if not st.session_state["token"]:
@@ -30,7 +35,7 @@ try:
 
         # 🚪 Logout Button
         if st.sidebar.button("🚪 Logout"):
-            logout_handler()
+            logout_handler(cookies)
 
         render_journal_entry_form()
         render_chat_interface()
