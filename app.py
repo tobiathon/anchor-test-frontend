@@ -20,7 +20,7 @@ st.title("🧠 Anchor Journal Portal")
 
 try:
     if not st.session_state.get("token"):
-    login_signup_flow()
+        login_signup_flow()
     else:
         st.sidebar.success(f"✅ Logged in as {st.session_state.get('username')}.")
 
