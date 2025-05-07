@@ -80,6 +80,7 @@ def render_chat_with_echo():
             }
             </script>
             """,
+            unsafe_allow_html=True
         )
         submitted = st.form_submit_button("Send")
 
