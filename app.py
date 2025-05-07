@@ -41,7 +41,7 @@ try:
 
         elif page == "💬 Chat with Echo":
             from pages.chat_with_echo import render_chat_with_echo
-            render_chat_interface()
+            render_chat_with_echo()
 
         elif page == "🎛️ Customize Echo":
             from pages.echo_setup import render_page as render_setup_page
