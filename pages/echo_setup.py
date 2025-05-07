@@ -33,19 +33,33 @@ profile = load_profile()
 
 # --- UI Form ---
 with st.form("echo_setup_form"):
+    # Prepare tone safely
+    tone_options = ["warm & gentle", "casual & direct", "reflective", "playful"]
+    saved_tone = profile.get("preferred_tone", "warm & gentle")
+    if saved_tone not in tone_options:
+        saved_tone = "warm & gentle"
+
     tone = st.selectbox(
         "What tone feels best when someone talks with you?",
-        ["warm & gentle", "casual & direct", "reflective", "playful"],
-        index=["warm & gentle", "casual & direct", "reflective", "playful"].index(profile.get("preferred_tone", "warm & gentle"))
+        tone_options,
+        index=tone_options.index(saved_tone)
     )
 
     name = st.text_input("What should Echo call you?", value=profile.get("preferred_name", ""))
 
     goals_raw = ", ".join(profile.get("goals", []))
-    goals = st.text_area("What are 1–2 goals you're working on right now?", value=goals_raw, help="Separate multiple goals with commas")
+    goals = st.text_area(
+        "What are 1–2 goals you're working on right now?",
+        value=goals_raw,
+        help="Separate multiple goals with commas"
+    )
 
     avoid_raw = ", ".join(profile.get("avoid_phrases", []))
-    avoid = st.text_area("Are there any phrases Echo should avoid?", value=avoid_raw, help="Separate multiple phrases with commas")
+    avoid = st.text_area(
+        "Are there any phrases Echo should avoid?",
+        value=avoid_raw,
+        help="Separate multiple phrases with commas"
+    )
 
     submitted = st.form_submit_button("Save Settings")
 
@@ -58,7 +72,12 @@ if submitted:
     }
 
     try:
-        res = requests.post(f"{API_URL}/profile/{user_id}/update", json=payload, headers=headers, timeout=15)
+        res = requests.post(
+            f"{API_URL}/profile/{user_id}/update",
+            json=payload,
+            headers=headers,
+            timeout=15
+        )
         res.raise_for_status()
         st.success("✨ Echo is now tuned to your preferences.")
     except Exception as e:
