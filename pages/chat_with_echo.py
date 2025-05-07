@@ -80,7 +80,7 @@ def render_chat_with_echo():
                     });
                 }
                 </script>
-            <div>
+            </div>
             """,
             unsafe_allow_html=True
         )
