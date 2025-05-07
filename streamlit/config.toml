@@ -1,4 +1,14 @@
+[theme]
+base="dark"
+
 [server]
+headless=true
+
+[browser]
+gatherUsageStats=false
+
+[client]
+showSidebarNavigation=false[server]
 headless = true
 port = 8501
 enableCORS = false
