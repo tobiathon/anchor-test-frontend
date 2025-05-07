@@ -20,14 +20,23 @@ st.title("🧠 Anchor Journal Portal")
 
 try:
     if not st.session_state.get("token"):
-        login_signup_flow()
+    login_signup_flow()
     else:
         st.sidebar.success(f"✅ Logged in as {st.session_state.get('username')}.")
 
+        # 🎯 Manual sidebar navigation
         st.sidebar.markdown("---")
-        st.sidebar.markdown("🧠 **Echo Settings**")
+        st.sidebar.header("🧭 Navigation")
+        
+        st.sidebar.page_link("app.py", label="🏠 Welcome")  # 'app' renamed
+        st.sidebar.page_link("pages/journal.py", label="📝 Journal")  # 'journal' clean
+        st.sidebar.page_link("pages/chat_with_echo.py", label="💬 Chat with Echo")  # 'chat with echo' correct
+        # Future Echo Settings can stay
+        st.sidebar.markdown("---")
+        st.sidebar.header("🧠 Echo Settings")
         st.sidebar.page_link("pages/echo_setup.py", label="🎛️ Customize Echo")
 
+        # 🚪 Logout button
         if st.sidebar.button("🚪 Logout"):
             logout_handler()
 
