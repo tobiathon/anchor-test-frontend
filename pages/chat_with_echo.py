@@ -65,20 +65,22 @@ def render_chat_with_echo():
         )
         st.markdown(
             """
-            <script>
-            const textarea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
-            if (textarea) {
-                textarea.addEventListener('keydown', function(event) {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                        event.preventDefault();
-                        const submitButton = window.parent.document.querySelector('button[kind="formSubmit"]');
-                        if (submitButton) {
-                            submitButton.click();
+            <div style="display:none">
+                <script>
+                const textarea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
+                if (textarea) {
+                    textarea.addEventListener('keydown', function(event) {
+                        if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            const submitButton = window.parent.document.querySelector('button[kind="formSubmit"]');
+                            if (submitButton) {
+                                submitButton.click();
+                            }
                         }
-                    }
-                });
-            }
-            </script>
+                    });
+                }
+                </script>
+            <div>
             """,
             unsafe_allow_html=True
         )
