@@ -3,7 +3,6 @@
 
 import streamlit as st
 from utils.api import send_chat_message
-from components.chat_bubble import render_chat_bubble
 
 def render_chat_with_echo():
     st.title("💬 Chat with Echo")
@@ -12,19 +11,56 @@ def render_chat_with_echo():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
+    # === Custom Message Renderer (modern bubbles) ===
+    def render_message(sender, message):
+        is_user = sender == "You"
+
+        bubble_color = "#DCF8C6" if is_user else "#ECECEC"
+        align = "flex-end" if is_user else "flex-start"
+        text_align = "right" if is_user else "left"
+        border_radius = "18px 18px 0px 18px" if is_user else "18px 18px 18px 0px"
+
+        st.markdown(
+            f"""
+            <div style="
+                display: flex;
+                justify-content: {align};
+                margin: 5px 0;
+            ">
+                <div style="
+                    background-color: {bubble_color};
+                    padding: 10px 15px;
+                    border-radius: {border_radius};
+                    max-width: 70%;
+                    text-align: {text_align};
+                    box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+                    word-wrap: break-word;
+                    font-size: 16px;
+                    line-height: 1.5;
+                ">
+                    {message}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     # === Chat Display Area ===
     chat_placeholder = st.container()
 
     with chat_placeholder:
         for sender, message in st.session_state.chat_history:
-            render_chat_bubble(sender, message)
+            render_message(sender, message)
 
     # === Input Form at Bottom ===
     st.markdown("---")
     with st.form(key="chat_input_form", clear_on_submit=True):
-        user_input = st.text_input(
+        user_input = st.text_area(
             "Message Echo...",
-            placeholder="Type your message and press Enter"
+            placeholder="Type your message and press Enter",
+            height=50,
+            max_chars=1000,
+            key="chat_input_area"
         )
         submitted = st.form_submit_button("Send")
 
