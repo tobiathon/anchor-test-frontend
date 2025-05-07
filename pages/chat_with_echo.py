@@ -66,11 +66,11 @@ def render_chat_with_echo():
         st.markdown(
             """
             <script>
-            const textArea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
-            if (textArea) {
-                textArea.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
+            const textarea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
+            if (textarea) {
+                textarea.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
                         const submitButton = window.parent.document.querySelector('button[kind="formSubmit"]');
                         if (submitButton) {
                             submitButton.click();
@@ -80,7 +80,6 @@ def render_chat_with_echo():
             }
             </script>
             """,
-            unsafe_allow_html=True,
         )
         submitted = st.form_submit_button("Send")
 
