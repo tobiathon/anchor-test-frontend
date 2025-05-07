@@ -5,15 +5,24 @@ from utils.auth import login_user, register_user
 from utils.session_manager import set_session_state
 
 def login_signup_flow():
-    # No cookies passed anymore!
-
     tab_login, tab_signup = st.tabs(["🔐 Login", "🆕 Sign Up"])
 
     with tab_login:
         st.subheader("Login")
 
-        username_input = st.text_input("Username", key="login_username")
-        password_input = st.text_input("Password", type="password", key="login_password")
+        username_input = st.text_input(
+            "Username",
+            key="login_username",
+            autocomplete="username"  # ✅ helps browser autofill
+        )
+
+        password_input = st.text_input(
+            "Password",
+            type="password",
+            key="login_password",
+            autocomplete="current-password"  # ✅ helps browser autofill
+        )
+
         login_clicked = st.button("Login", key="login_button")
 
         if login_clicked:
