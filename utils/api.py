@@ -1,6 +1,5 @@
-# API request functions
+# utils.api.py
 
-# File: frontend/utils/api.pyres.raise_for_status()
 import requests
 import streamlit as st
 from requests.exceptions import RequestException
