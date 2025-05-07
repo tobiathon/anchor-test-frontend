@@ -1,4 +1,5 @@
 # File: pages/chat_with_echo.py
+# streamlit_page_hidden
 
 import streamlit as st
 from utils.api import send_chat_message

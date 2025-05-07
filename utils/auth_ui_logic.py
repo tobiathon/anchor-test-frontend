@@ -1,5 +1,6 @@
 # utils/auth_ui_logic.py
 
+
 import streamlit as st
 from utils.auth import login_user, register_user
 from utils.session_manager import set_session_state

@@ -1,4 +1,5 @@
 # File: pages/journal.py
+# streamlit_page_hidden
 
 import streamlit as st
 from utils.api import submit_journal_entry
