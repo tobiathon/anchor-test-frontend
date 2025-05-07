@@ -58,8 +58,8 @@ def render_chat_with_echo():
         user_input = st.text_area(
             "Message Echo...",
             placeholder="Type your message and press Enter",
-            height=50,
-            max_chars=1000,
+            height=80,
+            max_chars=2000,
             key="chat_input_area"
         )
         submitted = st.form_submit_button("Send")
