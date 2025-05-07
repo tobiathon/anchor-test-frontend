@@ -29,6 +29,7 @@ def render_chat_with_echo():
             ">
                 <div style="
                     background-color: {bubble_color};
+                    color: black;
                     padding: 10px 15px;
                     border-radius: {border_radius};
                     max-width: 70%;
@@ -61,6 +62,25 @@ def render_chat_with_echo():
             height=80,
             max_chars=2000,
             key="chat_input_area"
+        )
+        st.markdown(
+            """
+            <script>
+            const textArea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
+            if (textArea) {
+                textArea.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        const submitButton = window.parent.document.querySelector('button[kind="formSubmit"]');
+                        if (submitButton) {
+                            submitButton.click();
+                        }
+                    }
+                });
+            }
+            </script>
+            """,
+            unsafe_allow_html=True,
         )
         submitted = st.form_submit_button("Send")
 
