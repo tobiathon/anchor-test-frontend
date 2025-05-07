@@ -40,7 +40,7 @@ try:
             render_journal_entry_form()
 
         elif page == "💬 Chat with Echo":
-            from pages.chat_with_echo import render_chat_interface
+            from pages.chat_with_echo import render_chat_with_echo
             render_chat_interface()
 
         elif page == "🎛️ Customize Echo":
