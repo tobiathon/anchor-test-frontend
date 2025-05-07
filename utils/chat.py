@@ -1,4 +1,4 @@
-# File: pages/chat.py
+# File: utils/chat.py
 
 import streamlit as st
 from utils.api import send_chat_message
