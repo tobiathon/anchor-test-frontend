@@ -4,7 +4,7 @@ import streamlit as st
 from utils.api import send_chat_message
 from components.chat_bubble import render_chat_bubble
 
-st.set_page_config(page_title="Chat with Echo", layout="centered")
+#st.set_page_config(page_title="Chat with Echo", layout="centered")
 st.title("💬 Chat with Echo")
 
 # === Init Chat Session State ===
