@@ -34,7 +34,7 @@ def register_user(username: str, password: str) -> bool:
     try:
         response = requests.post(
             f"{API_URL}/auth/signup",
-            data={"username": username, "password": password},
+            json={"username": username, "password": password},  # <--- use json= instead of data=
             timeout=10
         )
         return response.status_code == 200
