@@ -46,7 +46,7 @@ def render_chat_with_echo():
             unsafe_allow_html=True,
         )
 
-    # === Chat Display Area ===
+  # === Chat Display Area ===
     chat_placeholder = st.container()
 
     with chat_placeholder:
@@ -63,42 +63,33 @@ def render_chat_with_echo():
             max_chars=2000,
             key="chat_input_area"
         )
-            # === Input Form at Bottom ===
-    st.markdown("---")
-    with st.form(key="chat_input_form", clear_on_submit=True):
-        user_input = st.text_area(
-            "Message Echo...",
-            placeholder="Type your message and press Enter",
-            height=80,
-            max_chars=2000,
-            key="chat_input_area"
-        )
         st.markdown(
-        """
-        <div style="display:none">
-        <script>
-        const interval = setInterval(() => {
-            const textarea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
-            if (textarea) {
-                textarea.addEventListener('keydown', function(event) {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                        event.preventDefault();
-                        const submitButton = window.parent.document.querySelector('button[kind="formSubmit"]');
-                        if (submitButton) {
-                            submitButton.click();
+            """
+            <div style="display:none">
+            <script>
+            const interval = setInterval(() => {
+                const textarea = window.parent.document.querySelector('textarea[data-streamlit-key="chat_input_area"]');
+                if (textarea) {
+                    textarea.addEventListener('keydown', function(event) {
+                        if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            const submitButton = window.parent.document.querySelector('button[kind="formSubmit"]');
+                            if (submitButton) {
+                                submitButton.click();
+                            }
                         }
-                    }
-                });
-                clearInterval(interval);  // Stop checking once we find it
-            }
-        }, 300);  // Check every 300ms until it loads
-        </script>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+                    });
+                    clearInterval(interval);
+                }
+            }, 300);
+            </script>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         submitted = st.form_submit_button("Send")
 
+    # === Process Submission ===
     if submitted and user_input.strip():
         st.session_state.chat_history.append(("You", user_input.strip()))
         echo_response = send_chat_message(user_input.strip())
@@ -110,16 +101,4 @@ def render_chat_with_echo():
     elif submitted:
         st.warning("Please enter a message.")
 
-
-        submitted = st.form_submit_button("Send")
-
-    if submitted and user_input.strip():
-        st.session_state.chat_history.append(("You", user_input.strip()))
-        echo_response = send_chat_message(user_input.strip())
-        if echo_response:
-            st.session_state.chat_history.append(("Echo", echo_response))
-            st.rerun()
-        else:
-            st.error("❌ Failed to get response from Echo.")
-    elif submitted:
-        st.warning("Please enter a message.")
+       
