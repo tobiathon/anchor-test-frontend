@@ -5,6 +5,8 @@ import streamlit as st
 import requests
 
 API_URL = "https://anchor-app.onrender.com"  # Adjust if running locally
+#API_URL = "http://localhost:8000" #testing locally
+
 headers = {}
 
 # Load token and username from session

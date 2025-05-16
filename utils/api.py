@@ -4,7 +4,8 @@ import requests
 import streamlit as st
 from requests.exceptions import RequestException
 
-API_URL = "https://anchor-app.onrender.com"  # Or "http://localhost:8000" for local testing
+API_URL = "https://anchor-app.onrender.com"
+#API_URL =  "http://localhost:8000" # for local testing
 
 def get_auth_headers():
     token = st.session_state.get("token")
